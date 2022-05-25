@@ -30,7 +30,7 @@
         "pestphp/pest-plugin-parallel": "^1.1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^1.6",
+        "phpstan/phpstan": "^1.7.1",
         "phpstan/phpstan-phpunit": "^1.0",
         "phpunit/phpcov": "^8.2.1",
         "spatie/laravel-ray": "^1.29.6"
