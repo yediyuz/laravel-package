@@ -18,6 +18,7 @@ jobs:
       fail-fast: true
       matrix:
         php-version: [ 8.1 ]
+        coverage-file: [ default ]
         laravel: [ 9.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
@@ -78,17 +79,15 @@ jobs:
       - name: Run Tests
         run: composer test
         # </deleteCoverageElse> #
-
         # <deleteCoverage> #
       - name: Run Tests (with Coverage)
-        run: composer test:coverage
-
+        run: vendor/bin/pest --colors=always --coverage-clover coverage/reports/${{ matrix.coverage-file }}-report.xml
         # <deleteCodecov> #
       - name: Upload Coverage
         uses: actions/upload-artifact@v3
         if: "github.repository_owner == ':vendor_name'"
         with:
-          path: coverage/reports/default.xml
+          path: coverage/reports/${{ matrix.coverage-file }}-report.xml
         # </deleteCodecov> #
         # </deleteCoverage> #
 
