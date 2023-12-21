@@ -19,11 +19,11 @@ jobs:
       matrix:
         php-version: [ 8.1 ]
         coverage-file: [ default ]
-        laravel: [ 9.* ]
+        laravel: [ 10.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
-          - laravel: 9.*
-            testbench: 7.*
+          - laravel: 10.*
+            testbench: 8.18.*
 
     name: PHP ${{ matrix.php-version }} - L${{ matrix.laravel }} - T${{ matrix.testbench }} - ${{ matrix.stability }}
     steps:
@@ -44,7 +44,7 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer Dependencies
         uses: actions/cache@v3
