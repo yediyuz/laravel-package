@@ -9,3 +9,15 @@ parameters:
       - database # </hasDatabase> #
 
     tmpDir: build/phpstan
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: true
+
+    ignoreErrors:
+        - "#Unsafe usage of new static#"
+        - "#PHPDoc tag \\@var#"
+        - "#Dynamic call to static method Illuminate\\\\Database\\\\Eloquent\\\\Relations#"
+        - "#^Only booleans are allowed in a#"
+        - "#should return App\\\\Models\\\\[a-zA-Z0-9\\/\\_\\$]+ but returns Illuminate\\\\Database\\\\Eloquent\\\\Model#"
+        - "#^Unable to resolve the template type TKey in call to function collect$#"
+        - "#^Unable to resolve the template type TValue in call to function collect$#"

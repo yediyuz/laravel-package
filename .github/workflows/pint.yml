@@ -1,0 +1,47 @@
+name: Pint
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    types: [ ready_for_review, synchronize, opened ]
+
+jobs:
+
+  pint:
+    if: "!contains(github.event.head_commit.message, 'skip ci') && !contains(github.event.head_commit.message, 'skip lint')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Check Code Styles
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Dependencies
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Check Code Styles
+        if: github.event_name == 'pull_request'
+        run: composer test:lint
+
+      - name: Lint
+        if: github.event_name == 'push'
+        run: composer lint
+
+      - name: 🟢 Commit Changes
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Fix Styling

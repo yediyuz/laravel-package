@@ -17,18 +17,21 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php-version: [ 8.1 ]
-        coverage-file: [ default ]
-        laravel: [ 10.* ]
+        php-version: [ 8.1,  8.2,  8.3 ]
+        laravel: [ 10.*, 11.* ]
         stability: [ prefer-lowest, prefer-stable ]
+        exclude:
+          - laravel: 11.*
+            php-version: 8.1
         include:
           - laravel: 10.*
+            php-version: 8.1
             testbench: 8.18.*
 
     name: PHP ${{ matrix.php-version }} - L${{ matrix.laravel }} - T${{ matrix.testbench }} - ${{ matrix.stability }}
     steps:
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -47,7 +50,7 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: dependencies-laravel-${{ matrix.php-version }}-${{ matrix.laravel }}-${{ matrix.testbench }}-${{ matrix.stability }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -84,7 +87,7 @@ jobs:
         run: vendor/bin/pest --colors=always --coverage-clover coverage/reports/${{ matrix.coverage-file }}-report.xml
         # <deleteCodecov> #
       - name: Upload Coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: "github.repository_owner == ':vendor_name'"
         with:
           path: coverage/reports/${{ matrix.coverage-file }}-report.xml
@@ -101,10 +104,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Coverage Files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: coverage/reports
 
@@ -118,7 +121,7 @@ jobs:
         id: coverages
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           env_vars: OS

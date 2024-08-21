@@ -415,7 +415,7 @@ if (! $hasViews) {
 
 if (! $usePhpCsFixer) {
     safeUnlink(__DIR__ . '/.php-cs-fixer.dist.php');
-    safeUnlink(__DIR__ . '/.github/workflows/php-cs-fixer.yml');
+    safeUnlink(__DIR__ . '/.github/workflows/pint.yml');
 
     composer_forget([
         'require-dev.friendsofphp/php-cs-fixer',
