@@ -274,7 +274,7 @@ if (! is_null($usernameGuess)) {
 
 $vendorName = ask('Vendor name', $authorUsername);
 $vendorSlug = slugify($vendorName);
-$vendorNamespace = ucwords($vendorName);
+$vendorNamespace = studly_case($vendorName);
 $vendorNamespace = ask('Vendor namespace', $vendorNamespace);
 $defaultBranch = ask('Default branch', 'master');
 
