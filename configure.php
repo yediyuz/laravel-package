@@ -250,7 +250,7 @@ function replaceForWindows(): array
 
 function replaceForAllOtherOSes(): array
 {
-    return explode(PHP_EOL, run('grep -E -r -l -i "<\w+-->|\# <\w+> \#|\#<\w+>\#|\/\*\* <\w+> \*\/|\/\*\*<\w+>\*\/|:author|:vendor|:package|VendorName|skeleton|migration_table_name|vendor_name|vendor_slug|author@domain.com|:coverage_value|:default_branch|:codecov_token" --exclude-dir=vendor ./* ./.php-cs-fixer.dist.php ./.github/* | grep -v ' . basename(__FILE__)));
+    return explode(PHP_EOL, run('grep -E -r -l -i "<\w+-->|\# <\w+> \#|\#<\w+>\#|\/\*\* <\w+> \*\/|\/\*\*<\w+>\*\/|:author|:vendor|:package|VendorName|skeleton|migration_table_name|vendor_name|vendor_slug|author@domain.com|:coverage_value|:default_branch|:codecov_token" --exclude-dir=vendor ./* ./.github/* | grep -v ' . basename(__FILE__)));
 }
 
 $gitName = run('git config user.name');
@@ -300,7 +300,7 @@ $hasConfig = confirm('Has Config', true);
 $hasViews = confirm('Has Views', false);
 
 $usePhpStan = confirm('Enable PhpStan?', true);
-$usePhpCsFixer = confirm('Enable PhpCsFixer?', true);
+$usePint = confirm('Enable Pint?', true);
 $useUpdateChangelogWorkflow = confirm('Use automatic changelog updater workflow?', true);
 $coverage = 'none';
 $useCoverageInWorkflow = confirm('Use coverage in workflow?', true);
@@ -331,7 +331,7 @@ writeln("Has Facade           : " . ($hasFacade ? 'yes' : 'no'));
 writeln("Has Artisan Command  : " . ($hasCommand ? 'yes' : 'no'));
 writeln("---");
 writeln("Packages & Utilities");
-writeln("Use PhpCsFixer       : " . ($usePhpCsFixer ? 'yes' : 'no'));
+writeln("Use Pint       : " . ($usePint ? 'yes' : 'no'));
 writeln("Use Larastan/PhpStan : " . ($usePhpStan ? 'yes' : 'no'));
 writeln("Use Auto-Changelog   : " . ($useUpdateChangelogWorkflow ? 'yes' : 'no'));
 writeln("Use Coverage         : " . ($useCoverageInWorkflow ? 'yes' : 'none'));
@@ -349,24 +349,24 @@ $files = (str_starts_with(strtoupper(PHP_OS), 'WIN') ? replaceForWindows() : rep
 
 foreach ($files as $file) {
     replace_in_file($file, [
-        ':author_name'                 => $authorName,
-        ':author_username'             => $authorUsername,
-        'author@domain.com'            => $authorEmail,
-        ':vendor_name'                 => $vendorName,
-        ':vendor_slug'                 => $vendorSlug,
-        'VendorName'                   => $vendorNamespace,
-        ':package_name'                => $packageName,
-        ':package_slug'                => $packageSlug,
+        ':author_name' => $authorName,
+        ':author_username' => $authorUsername,
+        'author@domain.com' => $authorEmail,
+        ':vendor_name' => $vendorName,
+        ':vendor_slug' => $vendorSlug,
+        'VendorName' => $vendorNamespace,
+        ':package_name' => $packageName,
+        ':package_slug' => $packageSlug,
         ':package_slug_without_prefix' => $packageSlugWithoutPrefix,
-        'Skeleton'                     => $className,
-        'skeleton'                     => $packageSlug,
-        ':package_description'         => $description,
-        ':coverage_value'              => $coverage,
-        ':default_branch'              => $defaultBranch,
-        ':codecov_token'               => $codecovBadgeToken,
-        ':package_title'               => $packageTitle,
-        'migration_table_name'         => title_snake($packageSlug),
-        'variable'                     => $variableName,
+        'Skeleton' => $className,
+        'skeleton' => $packageSlug,
+        ':package_description' => $description,
+        ':coverage_value' => $coverage,
+        ':default_branch' => $defaultBranch,
+        ':codecov_token' => $codecovBadgeToken,
+        ':package_title' => $packageTitle,
+        'migration_table_name' => title_snake($packageSlug),
+        'variable' => $variableName,
     ]);
 
     removeConditionalCodeBlocks($file, 'deleteCoverage', $useCoverageInWorkflow);
@@ -413,12 +413,11 @@ if (! $hasViews) {
     safeDeleteDirectory(__DIR__ . '/resources');
 }
 
-if (! $usePhpCsFixer) {
-    safeUnlink(__DIR__ . '/.php-cs-fixer.dist.php');
+if (! $usePint) {
     safeUnlink(__DIR__ . '/.github/workflows/pint.yml');
 
     composer_forget([
-        'require-dev.friendsofphp/php-cs-fixer',
+        'require-dev.laravel/pint',
         'scripts.lint',
         'scripts.test:lint',
     ]);
